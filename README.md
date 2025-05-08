@@ -37,7 +37,7 @@ client = AcmeAISDK(
 )
 
 response = client.files.file_create(
-    file=b"raw file contents",
+    file=b"REPLACE_ME",
 )
 print(response.file_id)
 ```
@@ -65,7 +65,7 @@ client = AsyncAcmeAISDK(
 
 async def main() -> None:
     response = await client.files.file_create(
-        file=b"raw file contents",
+        file=b"REPLACE_ME",
     )
     print(response.file_id)
 
@@ -105,7 +105,7 @@ print(response.processing_options)
 
 ## File uploads
 
-Request parameters that correspond to file uploads can be passed as `bytes`, a [`PathLike`](https://docs.python.org/3/library/os.html#os.PathLike) instance or a tuple of `(filename, contents, media type)`.
+Request parameters that correspond to file uploads can be passed as `bytes`, or a [`PathLike`](https://docs.python.org/3/library/os.html#os.PathLike) instance or a tuple of `(filename, contents, media type)`.
 
 ```python
 from pathlib import Path
@@ -137,7 +137,7 @@ client = AcmeAISDK()
 
 try:
     client.files.file_create(
-        file=b"raw file contents",
+        file=b"REPLACE_ME",
     )
 except acme_ai_sdk.APIConnectionError as e:
     print("The server could not be reached")
@@ -182,7 +182,7 @@ client = AcmeAISDK(
 
 # Or, configure per-request:
 client.with_options(max_retries=5).files.file_create(
-    file=b"raw file contents",
+    file=b"REPLACE_ME",
 )
 ```
 
@@ -207,7 +207,7 @@ client = AcmeAISDK(
 
 # Override per-request:
 client.with_options(timeout=5.0).files.file_create(
-    file=b"raw file contents",
+    file=b"REPLACE_ME",
 )
 ```
 
@@ -250,7 +250,7 @@ from acme_ai_sdk import AcmeAISDK
 
 client = AcmeAISDK()
 response = client.files.with_raw_response.file_create(
-    file=b'raw file contents',
+    file=b"REPLACE_ME",
 )
 print(response.headers.get('X-My-Header'))
 
@@ -270,7 +270,7 @@ To stream the response body, use `.with_streaming_response` instead, which requi
 
 ```python
 with client.files.with_streaming_response.file_create(
-    file=b"raw file contents",
+    file=b"REPLACE_ME",
 ) as response:
     print(response.headers.get("X-My-Header"))
 
