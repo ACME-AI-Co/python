@@ -747,7 +747,7 @@ class TestAcmeAisdk:
         with pytest.raises(APITimeoutError):
             self.client.post(
                 "/files/",
-                body=cast(object, maybe_transform(dict(file=b"raw file contents"), FileFileCreateParams)),
+                body=cast(object, maybe_transform(dict(file=b"REPLACE_ME"), FileFileCreateParams)),
                 cast_to=httpx.Response,
                 options={"headers": {RAW_RESPONSE_HEADER: "stream"}},
             )
@@ -762,7 +762,7 @@ class TestAcmeAisdk:
         with pytest.raises(APIStatusError):
             self.client.post(
                 "/files/",
-                body=cast(object, maybe_transform(dict(file=b"raw file contents"), FileFileCreateParams)),
+                body=cast(object, maybe_transform(dict(file=b"REPLACE_ME"), FileFileCreateParams)),
                 cast_to=httpx.Response,
                 options={"headers": {RAW_RESPONSE_HEADER: "stream"}},
             )
@@ -1545,7 +1545,7 @@ class TestAsyncAcmeAisdk:
         with pytest.raises(APITimeoutError):
             await self.client.post(
                 "/files/",
-                body=cast(object, maybe_transform(dict(file=b"raw file contents"), FileFileCreateParams)),
+                body=cast(object, maybe_transform(dict(file=b"REPLACE_ME"), FileFileCreateParams)),
                 cast_to=httpx.Response,
                 options={"headers": {RAW_RESPONSE_HEADER: "stream"}},
             )
@@ -1560,7 +1560,7 @@ class TestAsyncAcmeAisdk:
         with pytest.raises(APIStatusError):
             await self.client.post(
                 "/files/",
-                body=cast(object, maybe_transform(dict(file=b"raw file contents"), FileFileCreateParams)),
+                body=cast(object, maybe_transform(dict(file=b"REPLACE_ME"), FileFileCreateParams)),
                 cast_to=httpx.Response,
                 options={"headers": {RAW_RESPONSE_HEADER: "stream"}},
             )
@@ -1663,7 +1663,7 @@ class TestAsyncAcmeAisdk:
         import threading
 
         from acme_ai_sdk._utils import asyncify
-        from acme_ai_sdk._base_client import get_platform 
+        from acme_ai_sdk._base_client import get_platform
 
         async def test_main() -> None:
             result = await asyncify(get_platform)()
