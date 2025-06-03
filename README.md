@@ -95,10 +95,7 @@ client = AcmeAISDK()
 
 response = client.files.file_create(
     file=b"raw file contents",
-    processing_options={
-        "language": "language",
-        "ocr": True,
-    },
+    processing_options={},
 )
 print(response.processing_options)
 ```
