@@ -173,10 +173,9 @@ class FilesResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> SyncOffset[FileFileslistResponse]:
-        """Retrieve the processing status of files.
+        """Retrieve a list of files.
 
-        Can be filtered by status and sorted by
-        upload time.
+        Can be filtered by status and sorted by upload time.
 
         Args:
           limit: Maximum number of files to return
@@ -366,10 +365,9 @@ class AsyncFilesResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> AsyncPaginator[FileFileslistResponse, AsyncOffset[FileFileslistResponse]]:
-        """Retrieve the processing status of files.
+        """Retrieve a list of files.
 
-        Can be filtered by status and sorted by
-        upload time.
+        Can be filtered by status and sorted by upload time.
 
         Args:
           limit: Maximum number of files to return
