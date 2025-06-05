@@ -18,7 +18,8 @@ from .._response import (
     async_to_raw_response_wrapper,
     async_to_streamed_response_wrapper,
 )
-from .._base_client import make_request_options
+from ..pagination import SyncOffset, AsyncOffset
+from .._base_client import AsyncPaginator, make_request_options
 from ..types.file_fileslist_response import FileFileslistResponse
 from ..types.file_file_create_response import FileFileCreateResponse
 from ..types.file_file_search_response import FileFileSearchResponse
@@ -171,7 +172,7 @@ class FilesResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> FileFileslistResponse:
+    ) -> SyncOffset[FileFileslistResponse]:
         """Retrieve the processing status of files.
 
         Can be filtered by status and sorted by
@@ -196,8 +197,9 @@ class FilesResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        return self._get(
+        return self._get_api_list(
             "/files/",
+            page=SyncOffset[FileFileslistResponse],
             options=make_request_options(
                 extra_headers=extra_headers,
                 extra_query=extra_query,
@@ -214,7 +216,7 @@ class FilesResource(SyncAPIResource):
                     file_fileslist_params.FileFileslistParams,
                 ),
             ),
-            cast_to=FileFileslistResponse,
+            model=FileFileslistResponse,
         )
 
 
@@ -349,7 +351,7 @@ class AsyncFilesResource(AsyncAPIResource):
             cast_to=FileFileSearchResponse,
         )
 
-    async def fileslist(
+    def fileslist(
         self,
         *,
         limit: int | NotGiven = NOT_GIVEN,
@@ -363,7 +365,7 @@ class AsyncFilesResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> FileFileslistResponse:
+    ) -> AsyncPaginator[FileFileslistResponse, AsyncOffset[FileFileslistResponse]]:
         """Retrieve the processing status of files.
 
         Can be filtered by status and sorted by
@@ -388,14 +390,15 @@ class AsyncFilesResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        return await self._get(
+        return self._get_api_list(
             "/files/",
+            page=AsyncOffset[FileFileslistResponse],
             options=make_request_options(
                 extra_headers=extra_headers,
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                query=await async_maybe_transform(
+                query=maybe_transform(
                     {
                         "limit": limit,
                         "offset": offset,
@@ -406,7 +409,7 @@ class AsyncFilesResource(AsyncAPIResource):
                     file_fileslist_params.FileFileslistParams,
                 ),
             ),
-            cast_to=FileFileslistResponse,
+            model=FileFileslistResponse,
         )
 
 

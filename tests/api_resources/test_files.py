@@ -14,6 +14,7 @@ from acme_ai_sdk.types import (
     FileFileCreateResponse,
     FileFileSearchResponse,
 )
+from acme_ai_sdk.pagination import SyncOffset, AsyncOffset
 
 base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
 
@@ -130,7 +131,7 @@ class TestFiles:
     @parametrize
     def test_method_fileslist(self, client: AcmeAISDK) -> None:
         file = client.files.fileslist()
-        assert_matches_type(FileFileslistResponse, file, path=["response"])
+        assert_matches_type(SyncOffset[FileFileslistResponse], file, path=["response"])
 
     @pytest.mark.skip()
     @parametrize
@@ -142,7 +143,7 @@ class TestFiles:
             sort_order="asc",
             status="pending",
         )
-        assert_matches_type(FileFileslistResponse, file, path=["response"])
+        assert_matches_type(SyncOffset[FileFileslistResponse], file, path=["response"])
 
     @pytest.mark.skip()
     @parametrize
@@ -152,7 +153,7 @@ class TestFiles:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         file = response.parse()
-        assert_matches_type(FileFileslistResponse, file, path=["response"])
+        assert_matches_type(SyncOffset[FileFileslistResponse], file, path=["response"])
 
     @pytest.mark.skip()
     @parametrize
@@ -162,7 +163,7 @@ class TestFiles:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             file = response.parse()
-            assert_matches_type(FileFileslistResponse, file, path=["response"])
+            assert_matches_type(SyncOffset[FileFileslistResponse], file, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -279,7 +280,7 @@ class TestAsyncFiles:
     @parametrize
     async def test_method_fileslist(self, async_client: AsyncAcmeAISDK) -> None:
         file = await async_client.files.fileslist()
-        assert_matches_type(FileFileslistResponse, file, path=["response"])
+        assert_matches_type(AsyncOffset[FileFileslistResponse], file, path=["response"])
 
     @pytest.mark.skip()
     @parametrize
@@ -291,7 +292,7 @@ class TestAsyncFiles:
             sort_order="asc",
             status="pending",
         )
-        assert_matches_type(FileFileslistResponse, file, path=["response"])
+        assert_matches_type(AsyncOffset[FileFileslistResponse], file, path=["response"])
 
     @pytest.mark.skip()
     @parametrize
@@ -301,7 +302,7 @@ class TestAsyncFiles:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         file = await response.parse()
-        assert_matches_type(FileFileslistResponse, file, path=["response"])
+        assert_matches_type(AsyncOffset[FileFileslistResponse], file, path=["response"])
 
     @pytest.mark.skip()
     @parametrize
@@ -311,6 +312,6 @@ class TestAsyncFiles:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             file = await response.parse()
-            assert_matches_type(FileFileslistResponse, file, path=["response"])
+            assert_matches_type(AsyncOffset[FileFileslistResponse], file, path=["response"])
 
         assert cast(Any, response.is_closed) is True
