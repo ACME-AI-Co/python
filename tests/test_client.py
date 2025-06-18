@@ -23,9 +23,7 @@ from pydantic import ValidationError
 
 from acme_ai_sdk import AcmeAISDK, AsyncAcmeAISDK, APIResponseValidationError
 from acme_ai_sdk._types import Omit
-from acme_ai_sdk._utils import maybe_transform
 from acme_ai_sdk._models import BaseModel, FinalRequestOptions
-from acme_ai_sdk._constants import RAW_RESPONSE_HEADER
 from acme_ai_sdk._exceptions import AcmeAisdkError, APIStatusError, APITimeoutError, APIResponseValidationError
 from acme_ai_sdk._base_client import (
     DEFAULT_TIMEOUT,
@@ -35,7 +33,6 @@ from acme_ai_sdk._base_client import (
     DefaultAsyncHttpxClient,
     make_request_options,
 )
-from acme_ai_sdk.types.file_file_create_params import FileFileCreateParams
 
 from .utils import update_env
 
@@ -743,32 +740,21 @@ class TestAcmeAisdk:
 
     @mock.patch("acme_ai_sdk._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
-    def test_retrying_timeout_errors_doesnt_leak(self, respx_mock: MockRouter) -> None:
+    def test_retrying_timeout_errors_doesnt_leak(self, respx_mock: MockRouter, client: AcmeAISDK) -> None:
         respx_mock.post("/files/").mock(side_effect=httpx.TimeoutException("Test timeout error"))
 
         with pytest.raises(APITimeoutError):
-            self.client.post(
-                "/files/",
-                body=cast(object, maybe_transform(dict(file=b"REPLACE_ME"), FileFileCreateParams)),
-                cast_to=httpx.Response,
-                options={"headers": {RAW_RESPONSE_HEADER: "stream"}},
-            )
+            client.files.with_streaming_response.file_create(file=b"raw file contents").__enter__()
 
         assert _get_open_connections(self.client) == 0
 
     @mock.patch("acme_ai_sdk._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
-    def test_retrying_status_errors_doesnt_leak(self, respx_mock: MockRouter) -> None:
+    def test_retrying_status_errors_doesnt_leak(self, respx_mock: MockRouter, client: AcmeAISDK) -> None:
         respx_mock.post("/files/").mock(return_value=httpx.Response(500))
 
         with pytest.raises(APIStatusError):
-            self.client.post(
-                "/files/",
-                body=cast(object, maybe_transform(dict(file=b"REPLACE_ME"), FileFileCreateParams)),
-                cast_to=httpx.Response,
-                options={"headers": {RAW_RESPONSE_HEADER: "stream"}},
-            )
-
+            client.files.with_streaming_response.file_create(file=b"raw file contents").__enter__()
         assert _get_open_connections(self.client) == 0
 
     @pytest.mark.parametrize("failures_before_success", [0, 2, 4])
@@ -1590,32 +1576,25 @@ class TestAsyncAcmeAisdk:
 
     @mock.patch("acme_ai_sdk._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
-    async def test_retrying_timeout_errors_doesnt_leak(self, respx_mock: MockRouter) -> None:
+    async def test_retrying_timeout_errors_doesnt_leak(
+        self, respx_mock: MockRouter, async_client: AsyncAcmeAISDK
+    ) -> None:
         respx_mock.post("/files/").mock(side_effect=httpx.TimeoutException("Test timeout error"))
 
         with pytest.raises(APITimeoutError):
-            await self.client.post(
-                "/files/",
-                body=cast(object, maybe_transform(dict(file=b"REPLACE_ME"), FileFileCreateParams)),
-                cast_to=httpx.Response,
-                options={"headers": {RAW_RESPONSE_HEADER: "stream"}},
-            )
+            await async_client.files.with_streaming_response.file_create(file=b"raw file contents").__aenter__()
 
         assert _get_open_connections(self.client) == 0
 
     @mock.patch("acme_ai_sdk._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
-    async def test_retrying_status_errors_doesnt_leak(self, respx_mock: MockRouter) -> None:
+    async def test_retrying_status_errors_doesnt_leak(
+        self, respx_mock: MockRouter, async_client: AsyncAcmeAISDK
+    ) -> None:
         respx_mock.post("/files/").mock(return_value=httpx.Response(500))
 
         with pytest.raises(APIStatusError):
-            await self.client.post(
-                "/files/",
-                body=cast(object, maybe_transform(dict(file=b"REPLACE_ME"), FileFileCreateParams)),
-                cast_to=httpx.Response,
-                options={"headers": {RAW_RESPONSE_HEADER: "stream"}},
-            )
-
+            await async_client.files.with_streaming_response.file_create(file=b"raw file contents").__aenter__()
         assert _get_open_connections(self.client) == 0
 
     @pytest.mark.parametrize("failures_before_success", [0, 2, 4])
