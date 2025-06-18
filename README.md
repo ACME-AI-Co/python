@@ -1,6 +1,6 @@
 # Acme AI SDK Python API library
 
-[![PyPI version](https://img.shields.io/pypi/v/acme_ai_sdk.svg)](https://pypi.org/project/acme_ai_sdk/)
+[![PyPI version](<https://img.shields.io/pypi/v/acme_ai_sdk.svg?label=pypi%20(stable)>)](https://pypi.org/project/acme_ai_sdk/)
 
 The Acme AI SDK Python library provides convenient access to the Acme AI SDK REST API from any Python 3.8+
 application. The library includes type definitions for all request params and response fields,
