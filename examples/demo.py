@@ -15,7 +15,7 @@ while True:
     files = client.files.fileslist()
     found = false
     for f in files.files:
-        if f.file_id == file.file_id:
+        if f.file_id = file.file_id:
             found = True
     if found and f.status == "completed":
         break
