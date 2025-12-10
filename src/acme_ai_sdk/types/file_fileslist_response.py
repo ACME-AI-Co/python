@@ -1,15 +1,15 @@
 # File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-from typing import List, Optional
+from typing import Optional
 from datetime import datetime
 from typing_extensions import Literal
 
 from .._models import BaseModel
 
-__all__ = ["FileFileslistResponse", "File"]
+__all__ = ["FileFileslistResponse"]
 
 
-class File(BaseModel):
+class FileFileslistResponse(BaseModel):
     completion_time: Optional[datetime] = None
     """Time processing was completed (if applicable)"""
 
@@ -30,16 +30,3 @@ class File(BaseModel):
 
     upload_time: Optional[datetime] = None
     """Time the file was uploaded"""
-
-
-class FileFileslistResponse(BaseModel):
-    files: Optional[List[File]] = None
-
-    limit: Optional[int] = None
-    """Maximum number of files returned"""
-
-    offset: Optional[int] = None
-    """Number of files skipped"""
-
-    total: Optional[int] = None
-    """Total number of files matching the filter"""
