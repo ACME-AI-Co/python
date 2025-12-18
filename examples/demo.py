@@ -22,6 +22,9 @@ while True:
 
     time.sleep(500)
 
-    search_results = client.files.file_search(file_id=file.file_id, query="chickadee")
+    if file.file_id:
+        search_results = client.files.file_search(file_id=file.file_id, query="chickadee")
+
+        print(search_results)
 
     print(search_results)
