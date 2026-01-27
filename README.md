@@ -1,6 +1,6 @@
 # Acme AI SDK Python API library
 
-[![PyPI version](https://img.shields.io/pypi/v/acme_ai_sdk.svg)](https://pypi.org/project/acme_ai_sdk/)
+[![PyPI version](<https://img.shields.io/pypi/v/acme_ai_sdk.svg?label=pypi%20(stable)>)](https://pypi.org/project/acme_ai_sdk/)
 
 The Acme AI SDK Python library provides convenient access to the Acme AI SDK REST API from any Python 3.8+
 application. The library includes type definitions for all request params and response fields,
@@ -20,7 +20,7 @@ pip install git+ssh://git@github.com/ACME-AI-Co/python.git
 ```
 
 > [!NOTE]
-> Once this package is [published to PyPI](https://app.stainless.com/docs/guides/publish), this will become: `pip install --pre acme_ai_sdk`
+> Once this package is [published to PyPI](https://www.stainless.com/docs/guides/publish), this will become: `pip install --pre acme_ai_sdk`
 
 ## Usage
 
@@ -37,7 +37,7 @@ client = AcmeAISDK(
 )
 
 response = client.files.file_create(
-    file=b"raw file contents",
+    file=b"REPLACE_ME",
 )
 print(response.file_id)
 ```
@@ -65,7 +65,7 @@ client = AsyncAcmeAISDK(
 
 async def main() -> None:
     response = await client.files.file_create(
-        file=b"raw file contents",
+        file=b"REPLACE_ME",
     )
     print(response.file_id)
 
@@ -75,6 +75,42 @@ asyncio.run(main())
 
 Functionality between the synchronous and asynchronous clients is otherwise identical.
 
+### With aiohttp
+
+By default, the async client uses `httpx` for HTTP requests. However, for improved concurrency performance you may also use `aiohttp` as the HTTP backend.
+
+You can enable this by installing `aiohttp`:
+
+```sh
+# install from the production repo
+pip install 'acme_ai_sdk[aiohttp] @ git+ssh://git@github.com/ACME-AI-Co/python.git'
+```
+
+Then you can enable it by instantiating the client with `http_client=DefaultAioHttpClient()`:
+
+```python
+import os
+import asyncio
+from acme_ai_sdk import DefaultAioHttpClient
+from acme_ai_sdk import AsyncAcmeAISDK
+
+
+async def main() -> None:
+    async with AsyncAcmeAISDK(
+        bearer_token=os.environ.get(
+            "ACME_AI_SDK_BEARER_TOKEN"
+        ),  # This is the default and can be omitted
+        http_client=DefaultAioHttpClient(),
+    ) as client:
+        response = await client.files.file_create(
+            file=b"REPLACE_ME",
+        )
+        print(response.file_id)
+
+
+asyncio.run(main())
+```
+
 ## Using types
 
 Nested request parameters are [TypedDicts](https://docs.python.org/3/library/typing.html#typing.TypedDict). Responses are [Pydantic models](https://docs.pydantic.dev) which also provide helper methods for things like:
@@ -83,6 +119,79 @@ Nested request parameters are [TypedDicts](https://docs.python.org/3/library/typ
 - Converting to a dictionary, `model.to_dict()`
 
 Typed requests and responses provide autocomplete and documentation within your editor. If you would like to see type errors in VS Code to help catch bugs earlier, set `python.analysis.typeCheckingMode` to `basic`.
+
+## Pagination
+
+List methods in the Acme AI SDK API are paginated.
+
+This library provides auto-paginating iterators with each list response, so you do not have to request successive pages manually:
+
+```python
+from acme_ai_sdk import AcmeAISDK
+
+client = AcmeAISDK()
+
+all_files = []
+# Automatically fetches more pages as needed.
+for file in client.files.fileslist(
+    limit=20,
+    offset=20,
+):
+    # Do something with file here
+    all_files.append(file)
+print(all_files)
+```
+
+Or, asynchronously:
+
+```python
+import asyncio
+from acme_ai_sdk import AsyncAcmeAISDK
+
+client = AsyncAcmeAISDK()
+
+
+async def main() -> None:
+    all_files = []
+    # Iterate through items across all pages, issuing requests as needed.
+    async for file in client.files.fileslist(
+        limit=20,
+        offset=20,
+    ):
+        all_files.append(file)
+    print(all_files)
+
+
+asyncio.run(main())
+```
+
+Alternatively, you can use the `.has_next_page()`, `.next_page_info()`, or `.get_next_page()` methods for more granular control working with pages:
+
+```python
+first_page = await client.files.fileslist(
+    limit=20,
+    offset=20,
+)
+if first_page.has_next_page():
+    print(f"will fetch next page using these details: {first_page.next_page_info()}")
+    next_page = await first_page.get_next_page()
+    print(f"number of items we just fetched: {len(next_page.files)}")
+
+# Remove `await` for non-async usage.
+```
+
+Or just work directly with the returned data:
+
+```python
+first_page = await client.files.fileslist(
+    limit=20,
+    offset=20,
+)
+for file in first_page.files:
+    print(file.file_id)
+
+# Remove `await` for non-async usage.
+```
 
 ## Nested params
 
@@ -95,17 +204,14 @@ client = AcmeAISDK()
 
 response = client.files.file_create(
     file=b"raw file contents",
-    processing_options={
-        "language": "language",
-        "ocr": True,
-    },
+    processing_options={},
 )
 print(response.processing_options)
 ```
 
 ## File uploads
 
-Request parameters that correspond to file uploads can be passed as `bytes`, a [`PathLike`](https://docs.python.org/3/library/os.html#os.PathLike) instance or a tuple of `(filename, contents, media type)`.
+Request parameters that correspond to file uploads can be passed as `bytes`, or a [`PathLike`](https://docs.python.org/3/library/os.html#os.PathLike) instance or a tuple of `(filename, contents, media type)`.
 
 ```python
 from pathlib import Path
@@ -137,7 +243,7 @@ client = AcmeAISDK()
 
 try:
     client.files.file_create(
-        file=b"raw file contents",
+        file=b"REPLACE_ME",
     )
 except acme_ai_sdk.APIConnectionError as e:
     print("The server could not be reached")
@@ -182,14 +288,14 @@ client = AcmeAISDK(
 
 # Or, configure per-request:
 client.with_options(max_retries=5).files.file_create(
-    file=b"raw file contents",
+    file=b"REPLACE_ME",
 )
 ```
 
 ### Timeouts
 
 By default requests time out after 1 minute. You can configure this with a `timeout` option,
-which accepts a float or an [`httpx.Timeout`](https://www.python-httpx.org/advanced/#fine-tuning-the-configuration) object:
+which accepts a float or an [`httpx.Timeout`](https://www.python-httpx.org/advanced/timeouts/#fine-tuning-the-configuration) object:
 
 ```python
 from acme_ai_sdk import AcmeAISDK
@@ -207,7 +313,7 @@ client = AcmeAISDK(
 
 # Override per-request:
 client.with_options(timeout=5.0).files.file_create(
-    file=b"raw file contents",
+    file=b"REPLACE_ME",
 )
 ```
 
@@ -250,7 +356,7 @@ from acme_ai_sdk import AcmeAISDK
 
 client = AcmeAISDK()
 response = client.files.with_raw_response.file_create(
-    file=b'raw file contents',
+    file=b"REPLACE_ME",
 )
 print(response.headers.get('X-My-Header'))
 
@@ -270,7 +376,7 @@ To stream the response body, use `.with_streaming_response` instead, which requi
 
 ```python
 with client.files.with_streaming_response.file_create(
-    file=b"raw file contents",
+    file=b"REPLACE_ME",
 ) as response:
     print(response.headers.get("X-My-Header"))
 
